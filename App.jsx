@@ -1,0 +1,182 @@
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+
+export default function QuizEmagrecaRapido() {
+  const questions = [
+    {
+      question: "Qual o maior desafio que você enfrenta hoje?",
+      options: [
+        "Falta de tempo para cuidar de mim",
+        "Ansiedade e vontade de comer doces",
+        "Dietas que não dão resultado",
+        "Falta de motivação para continuar",
+      ],
+    },
+    {
+      question: "Como está sua alimentação atualmente?",
+      options: [
+        "Como de forma desregrada",
+        "Tento comer bem, mas acabo exagerando",
+        "Faço dieta durante a semana e escapo no fim de semana",
+        "Já tentei de tudo e nada funciona",
+      ],
+    },
+    {
+      question: "Você pratica atividade física?",
+      options: ["Sim, regularmente", "Às vezes", "Raramente", "Nunca"],
+    },
+    {
+      question: "Quantas horas você costuma dormir por noite?",
+      options: [
+        "Menos de 5 horas",
+        "Entre 6 e 7 horas",
+        "8 horas ou mais",
+        "Sono irregular / acordo cansada(o)",
+      ],
+    },
+    {
+      question: "Qual o seu principal objetivo agora?",
+      options: [
+        "Perder barriga",
+        "Secar e definir",
+        "Ganhar energia e disposição",
+        "Melhorar minha autoestima",
+      ],
+    },
+  ];
+
+  const [current, setCurrent] = useState(0);
+  const [answers, setAnswers] = useState([]);
+  const [showResult, setShowResult] = useState(false);
+  const [userData, setUserData] = useState({ name: "", email: "" });
+  const [showForm, setShowForm] = useState(false);
+
+  const handleAnswer = (option) => {
+    const newAnswers = [...answers];
+    newAnswers[current] = option;
+    setAnswers(newAnswers);
+    if (current + 1 < questions.length) {
+      setCurrent(current + 1);
+    } else {
+      setShowForm(true);
+    }
+  };
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    setShowResult(true);
+  };
+
+  const whatsappLink =
+    "https://api.whatsapp.com/send?phone=55&text=Olá!%20Fiz%20o%20quiz%20e%20quero%20receber%20meu%20Ebook%20Emagreça%20Rápido!";
+
+  return (
+    <div className="min-h-screen bg-white text-gray-800 flex flex-col items-center justify-center p-6">
+      <div className="w-full max-w-4xl mb-8 rounded-2xl overflow-hidden shadow-lg">
+        <img
+          src="https://images.unsplash.com/photo-1594737625785-c5c3b14bbd62?auto=format&fit=crop&w=1400&q=80"
+          alt="Mulher treinando fitness"
+          className="w-full h-64 object-cover"
+        />
+      </div>
+
+      <div className="max-w-lg w-full text-center">
+        <h1 className="text-3xl font-bold text-blue-600 mb-4">
+          Descubra o que está te impedindo de emagrecer 💪
+        </h1>
+        <p className="text-gray-600 mb-8">
+          Leva só 1 minuto! Faça o quiz e receba seu diagnóstico + Ebook gratuito{" "}
+          <strong>Emagreça Rápido</strong>!
+        </p>
+
+        <AnimatePresence mode="wait">
+          {!showResult && !showForm ? (
+            <motion.div
+              key={current}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.4 }}
+              className="bg-gray-50 p-6 rounded-2xl shadow-lg">
+              <h2 className="text-xl font-semibold mb-6">
+                {questions[current].question}
+              </h2>
+              <div className="grid grid-cols-1 gap-3">
+                {questions[current].options.map((option, i) => (
+                  <button
+                    key={i}
+                    onClick={() => handleAnswer(option)}
+                    className="p-3 rounded-xl border border-blue-500 text-blue-600 hover:bg-blue-500 hover:text-white transition-all">
+                    {option}
+                  </button>
+                ))}
+              </div>
+              <p className="text-sm text-gray-400 mt-4">
+                Pergunta {current + 1} de {questions.length}
+              </p>
+            </motion.div>
+          ) : !showResult && showForm ? (
+            <motion.form
+              onSubmit={handleFormSubmit}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.4 }}
+              className="bg-gray-50 p-6 rounded-2xl shadow-lg">
+              <h2 className="text-2xl font-bold text-blue-700 mb-4">
+                Último passo! 👇
+              </h2>
+              <p className="text-gray-600 mb-6">
+                Deixe seus dados para receber o link do seu resultado e o Ebook no WhatsApp.
+              </p>
+              <input
+                type="text"
+                placeholder="Seu nome"
+                required
+                className="w-full mb-3 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                value={userData.name}
+                onChange={(e) => setUserData({ ...userData, name: e.target.value })}
+              />
+              <input
+                type="email"
+                placeholder="Seu melhor e-mail"
+                required
+                className="w-full mb-6 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                value={userData.email}
+                onChange={(e) => setUserData({ ...userData, email: e.target.value })}
+              />
+              <button
+                type="submit"
+                className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition-all">
+                Ver resultado e receber Ebook
+              </button>
+            </motion.form>
+          ) : (
+            <motion.div
+              key="result"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.4 }}
+              className="bg-blue-50 p-8 rounded-2xl shadow-lg">
+              <h2 className="text-2xl font-bold text-blue-700 mb-4">
+                Seu resultado está pronto! 🎯
+              </h2>
+              <p className="text-gray-700 mb-6">
+                {userData.name ? `Olá, ${userData.name}! ` : ""}Você tem um perfil determinado e quer alcançar resultados reais. Nosso
+                <strong> Ebook Emagreça Rápido</strong> foi feito exatamente para o seu tipo de desafio — com plano alimentar, dicas práticas e treinos simples para eliminar gordura mesmo com pouco tempo.
+              </p>
+              <a
+                href={whatsappLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block bg-green-500 text-white px-6 py-3 rounded-xl font-semibold shadow-md hover:bg-green-600 transition-all">
+                Quero meu Ebook no WhatsApp 📗
+              </a>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
